@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Analiz Lab">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Analiz Lab</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--card2:#1c2230;--line:#262d3a;--tx:#e8edf4;--mu:#8b96a8;--ac:#4ade80;--ac2:#22c55e;--am:#fbbf24;--rd:#f87171;--bl:#60a5fa;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#22c55e,#0ea5e9);display:grid;place-items:center;font-weight:800;font-size:14px;color:#04110a}
+.brand h1{font-size:19px;font-weight:750;letter-spacing:-.3px}
+.brand small{display:block;color:var(--mu);font-size:12px;font-weight:500;letter-spacing:0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 18px 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--mu);font-size:13px;font-weight:600}
+.chip.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.chip.hi.on{background:var(--ac);border-color:var(--ac);color:#04110a}
+main{padding:10px 14px}
+.sec{color:var(--mu);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin:18px 4px 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.mh{display:flex;justify-content:space-between;color:var(--mu);font-size:12px;font-weight:600;margin-bottom:8px}
+.teams{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
+.tn{font-weight:650;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.form{display:flex;gap:3px}
+.form i{width:7px;height:7px;border-radius:50%;background:var(--mu)}
+.form i.G{background:var(--ac)}.form i.B{background:var(--am)}.form i.M{background:var(--rd)}
+.bar{display:flex;height:8px;border-radius:6px;overflow:hidden;margin:12px 0 5px;gap:2px}
+.bar b{display:block}
+.b1{background:var(--ac)}.bX{background:#64748b}.b2{background:var(--bl)}
+.bl{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}
+.bl span b{color:var(--tx);font-weight:650}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.st{background:var(--card2);border-radius:10px;padding:8px;text-align:center}
+.st b{display:block;font-size:15px}
+.st span{font-size:11px;color:var(--mu)}
+.picks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.pk{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:11px;background:var(--card2);border:1px solid var(--line)}
+.pk.yuksek{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.08)}
+.pk .l{font-weight:650}
+.pk .c{font-size:11px;color:var(--mu);display:block;font-weight:500}
+.pk .v{text-align:right;font-weight:750;font-size:16px}
+.tag{font-size:10px;font-weight:800;letter-spacing:.4px;padding:2px 6px;border-radius:6px;margin-left:6px;vertical-align:2px}
+.tag.yuksek{background:var(--ac);color:#04110a}.tag.orta{background:#334155;color:#cbd5e1}
+.more{display:none;margin-top:10px;border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--mu)}
+.card.open .more{display:block}
+.row{display:flex;justify-content:space-between;padding:3px 0}
+.row b{color:var(--tx);font-weight:600}
+.empty{text-align:center;color:var(--mu);padding:40px 20px}
+.empty b{display:block;color:var(--tx);font-size:17px;margin-bottom:6px}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center}
+.kpi b{display:block;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.kpi span{font-size:11.5px;color:var(--mu)}
+.res{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.res:last-child{border:0}
+.dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.dot.y{background:rgba(74,222,128,.15);color:var(--ac)}.dot.n{background:rgba(248,113,113,.15);color:var(--rd)}
+.res .t{flex:1;min-width:0}.res .t div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .t small{color:var(--mu);font-size:12px}
+.prose p{color:#c3cbd8;margin-bottom:12px}
+.prose h3{font-size:15px;margin:16px 0 6px}
+.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:12px;padding:12px;color:#fde68a;font-size:13px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(13,17,23,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:0;color:var(--mu);font:600 11px/1.2 inherit;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
+nav button.on{color:var(--ac)}
+.gate{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;justify-content:center;padding:32px;gap:14px}
+.gate h2{font-size:22px}.gate p{color:var(--mu)}
+.btn{background:var(--ac);color:#04110a;border:0;border-radius:12px;padding:14px;font:700 15px inherit}
+.btn.g{background:var(--card);color:var(--tx);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">AL</div><div><h1>Analiz Lab</h1><small id="gen">İstatistik ve model analizi</small></div></div></header>
+<div id="view"></div>
+<nav>
+ <button data-t="m" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>Maçlar</button>
+ <button data-t="b"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Başarı</button>
+ <button data-t="h"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Hakkında</button>
+</nav>
+<script>
+var DATA={"gen": "2026-11-12T07:15+00:00", "matches": [], "track": {"cat": [{"k": "Sonuç ve gol", "n": 219, "hit": 133, "p": 0.582}, {"k": "Korner", "n": 99, "hit": 55, "p": 0.599}, {"k": "Kart", "n": 80, "hit": 54, "p": 0.681}], "recent": [{"d": "2026-11-08T20:30:00.000Z", "m": "Estrela Amadora – SL Benfica", "sc": "2-3", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.714, "ok": 1}, {"d": "2026-11-08T20:30:00.000Z", "m": "Estrela Amadora – SL Benfica", "sc": "2-3", "cat": "Korner", "s": "Korner 9.5 Üst", "p": 0.574, "ok": 1}, {"d": "2026-11-08T20:30:00.000Z", "m": "Estrela Amadora – SL Benfica", "sc": "2-3", "cat": "Kart", "s": "Kart 4.5 Alt", "p": 0.584, "ok": 1}, {"d": "2026-11-08T20:30:00.000Z", "m": "Rio Ave FC – SC Braga", "sc": "0-1", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.622, "ok": 0}, {"d": "2026-11-08T20:30:00.000Z", "m": "Rio Ave FC – SC Braga", "sc": "0-1", "cat": "Korner", "s": "Korner 9.5 Üst", "p": 0.537, "ok": 0}, {"d": "2026-11-08T20:30:00.000Z", "m": "Rio Ave FC – SC Braga", "sc": "0-1", "cat": "Kart", "s": "Kart 4.5 Alt", "p": 0.582, "ok": 1}, {"d": "2026-11-08T20:00:00.000Z", "m": "Atletico Madrid – FC Barcelona", "sc": "1-2", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.776, "ok": 1}, {"d": "2026-11-08T20:00:00.000Z", "m": "Atletico Madrid – FC Barcelona", "sc": "1-2", "cat": "Korner", "s": "Korner 9.5 Üst", "p": 0.713, "ok": 0}, {"d": "2026-11-08T19:45:00.000Z", "m": "ACF Fiorentina – Juventus Turin", "sc": "2-2", "cat": "Sonuç ve gol", "s": "MS 2", "p": 0.464, "ok": 0}, {"d": "2026-11-08T19:45:00.000Z", "m": "Racing Club De Lens – Olympique Marseille", "sc": "1-2", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.551, "ok": 1}, {"d": "2026-11-08T19:45:00.000Z", "m": "Racing Club De Lens – Olympique Marseille", "sc": "1-2", "cat": "Kart", "s": "Kart 3.5 Üst", "p": 0.697, "ok": 0}, {"d": "2026-11-08T19:00:00.000Z", "m": "FC Utrecht – NEC Nijmegen", "sc": "2-3", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.644, "ok": 1}, {"d": "2026-11-08T19:00:00.000Z", "m": "FC Utrecht – NEC Nijmegen", "sc": "2-3", "cat": "Korner", "s": "Korner 9.5 Üst", "p": 0.585, "ok": 1}, {"d": "2026-11-08T19:00:00.000Z", "m": "FC Utrecht – NEC Nijmegen", "sc": "2-3", "cat": "Kart", "s": "Kart 4.5 Alt", "p": 0.776, "ok": 0}, {"d": "2026-11-08T19:00:00.000Z", "m": "Olympiacos Piraeus – PAOK Thessaloniki", "sc": "1-1", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.544, "ok": 0}, {"d": "2026-11-08T19:00:00.000Z", "m": "Olympiacos Piraeus – PAOK Thessaloniki", "sc": "1-1", "cat": "Korner", "s": "Korner 8.5 Üst", "p": 0.688, "ok": 1}, {"d": "2026-11-08T18:30:00.000Z", "m": "TSG Hoffenheim – Schalke 04", "sc": "2-1", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.696, "ok": 1}, {"d": "2026-11-08T18:30:00.000Z", "m": "TSG Hoffenheim – Schalke 04", "sc": "2-1", "cat": "Korner", "s": "Korner 8.5 Üst", "p": 0.637, "ok": 1}, {"d": "2026-11-08T18:30:00.000Z", "m": "L.R. Vicenza – US Cremonese", "sc": "1-4", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.559, "ok": 1}, {"d": "2026-11-08T18:15:00.000Z", "m": "St. Truidense VV – SV Zulte Waregem", "sc": "4-1", "cat": "Sonuç ve gol", "s": "MS 1", "p": 0.532, "ok": 1}, {"d": "2026-11-08T18:15:00.000Z", "m": "St. Truidense VV – SV Zulte Waregem", "sc": "4-1", "cat": "Korner", "s": "Korner 8.5 Üst", "p": 0.678, "ok": 1}, {"d": "2026-11-08T18:15:00.000Z", "m": "St. Truidense VV – SV Zulte Waregem", "sc": "4-1", "cat": "Kart", "s": "Kart 4.5 Alt", "p": 0.735, "ok": 1}, {"d": "2026-11-08T18:00:00.000Z", "m": "Besiktas Istanbul – Genclerbirligi SK", "sc": "3-0", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.583, "ok": 0}, {"d": "2026-11-08T18:00:00.000Z", "m": "Besiktas Istanbul – Genclerbirligi SK", "sc": "3-0", "cat": "Korner", "s": "Korner 9.5 Üst", "p": 0.572, "ok": 0}, {"d": "2026-11-08T18:00:00.000Z", "m": "Besiktas Istanbul – Genclerbirligi SK", "sc": "3-0", "cat": "Kart", "s": "Kart 4.5 Alt", "p": 0.541, "ok": 0}, {"d": "2026-11-08T18:00:00.000Z", "m": "Vitoria SC Guimaraes – FC Porto", "sc": "1-2", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.554, "ok": 1}, {"d": "2026-11-08T18:00:00.000Z", "m": "Vitoria SC Guimaraes – FC Porto", "sc": "1-2", "cat": "Korner", "s": "Korner 9.5 Alt", "p": 0.556, "ok": 1}, {"d": "2026-11-08T17:30:00.000Z", "m": "RC Celta de Vigo – Levante UD", "sc": "0-0", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.564, "ok": 0}, {"d": "2026-11-08T17:30:00.000Z", "m": "RC Celta de Vigo – Levante UD", "sc": "0-0", "cat": "Korner", "s": "Korner 9.5 Alt", "p": 0.581, "ok": 1}, {"d": "2026-11-08T17:30:00.000Z", "m": "Villarreal CF – Getafe CF", "sc": "2-0", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.501, "ok": 0}, {"d": "2026-11-08T17:30:00.000Z", "m": "Villarreal CF – Getafe CF", "sc": "2-0", "cat": "Kart", "s": "Kart 3.5 Üst", "p": 0.725, "ok": 1}, {"d": "2026-11-08T17:30:00.000Z", "m": "Sporting Gijon – Real Valladolid", "sc": "1-2", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.532, "ok": 1}, {"d": "2026-11-08T17:30:00.000Z", "m": "Sporting Gijon – Real Valladolid", "sc": "1-2", "cat": "Korner", "s": "Korner 9.5 Alt", "p": 0.56, "ok": 0}, {"d": "2026-11-08T17:30:00.000Z", "m": "Sporting Gijon – Real Valladolid", "sc": "1-2", "cat": "Kart", "s": "Kart 4.5 Üst", "p": 0.624, "ok": 1}, {"d": "2026-11-08T17:30:00.000Z", "m": "Union Saint-Gilloise – KRC Genk", "sc": "1-0", "cat": "Sonuç ve gol", "s": "2.5 Üst", "p": 0.622, "ok": 0}, {"d": "2026-11-08T17:30:00.000Z", "m": "Union Saint-Gilloise – KRC Genk", "sc": "1-0", "cat": "Korner", "s": "Korner 8.5 Üst", "p": 0.666, "ok": 1}, {"d": "2026-11-08T17:00:00.000Z", "m": "Inter Milano – Como 1907", "sc": "2-0", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.658, "ok": 0}, {"d": "2026-11-08T17:00:00.000Z", "m": "Inter Milano – Como 1907", "sc": "2-0", "cat": "Korner", "s": "Korner 9.5 Alt", "p": 0.565, "ok": 1}, {"d": "2026-11-08T16:30:00.000Z", "m": "Manchester United – Aston Villa", "sc": "4-4", "cat": "Sonuç ve gol", "s": "KG Var", "p": 0.646, "ok": 1}, {"d": "2026-11-08T16:30:00.000Z", "m": "Manchester United – Aston Villa", "sc": "4-4", "cat": "Korner", "s": "Korner 8.5 Üst", "p": 0.791, "ok": 1}]}};
+var DATA_URL=window.ANALIZLAB_DATA_URL||null; // mağaza sürümünde herkese açık veri adresi
+var S={t:'m',day:null,hi:false,open:{}};
+function st(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function pc(x){return x==null?'–':Math.round(x*100)+'%'}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function dkey(iso){var d=new Date(iso);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function dlabel(k){var t=dkey(new Date().toISOString()),y=new Date(Date.now()+864e5);if(k===t)return'Bugün';if(k===dkey(y.toISOString()))return'Yarın';var d=new Date(k+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'short',day:'numeric',month:'short'})}
+function hm(iso){return new Date(iso).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
+function form(f){return '<span class="form">'+(f||[]).map(function(x){return'<i class="'+x+'"></i>'}).join('')+'</span>'}
+function matches(){
+  var M=(DATA.matches||[]).filter(function(m){return new Date(m.start).getTime()>Date.now()-2*36e5});
+  var days=[];M.forEach(function(m){var k=dkey(m.start);if(days.indexOf(k)<0)days.push(k)});
+  if(!S.day||days.indexOf(S.day)<0)S.day=days[0]||null;
+  var h='<div class="chips"><span class="chip hi'+(S.hi?' on':'')+'" data-hi>★ Yüksek güven</span>'+days.map(function(k){return'<span class="chip'+(k===S.day?' on':'')+'" data-day="'+k+'">'+dlabel(k)+'</span>'}).join('')+'</div><main>';
+  var L=M.filter(function(m){return dkey(m.start)===S.day&&(!S.hi||m.picks.some(function(p){return p.g==='yuksek'}))});
+  if(!M.length) return h+'<div class="empty"><b>Şu an analiz edilmiş maç yok</b>Yeni maçlar her gün sabah, akşam ve gece güncellenir.</div></main>';
+  if(!L.length) return h+'<div class="empty"><b>Bu günde yüksek güvenli analiz yok</b>Filtreyi kaldırarak tüm maçları görebilirsin.</div></main>';
+  var lig=null;
+  L.forEach(function(m){
+    if(m.lig!==lig){lig=m.lig;h+='<div class="sec">'+esc(lig)+'</div>'}
+    var p=m.p||{},e=m.exp||{},a=m.te[0]||{},b=m.te[1]||{};
+    h+='<div class="card'+(S.open[m.id]?' open':'')+'" data-id="'+m.id+'"><div class="mh"><span>'+hm(m.start)+'</span><span>'+(m.n?m.n+' benzer maç':'')+'</span></div>'
+     +'<div class="teams"><div class="tn">'+esc(m.ev)+'</div>'+form(a.form)+'<div class="tn">'+esc(m.dep)+'</div>'+form(b.form)+'</div>';
+    if(p['1']!=null) h+='<div class="bar"><b class="b1" style="flex:'+p['1']+'"></b><b class="bX" style="flex:'+p.X+'"></b><b class="b2" style="flex:'+p['2']+'"></b></div><div class="bl"><span>Ev <b>'+pc(p['1'])+'</b></span><span>Beraberlik <b>'+pc(p.X)+'</b></span><span>Deplasman <b>'+pc(p['2'])+'</b></span></div>'
+     +'<div class="stats"><div class="st"><b>'+pc(p.u25)+'</b><span>2.5 Üst</span></div><div class="st"><b>'+pc(p.kg)+'</b><span>KG Var</span></div><div class="st"><b>'+(e.gol!=null?e.gol:'–')+'</b><span>Bekl. gol</span></div></div>';
+    if(m.picks.length) h+='<div class="picks">'+m.picks.map(function(k){return'<div class="pk '+k.g+'"><div><span class="l">'+esc(k.s)+'<span class="tag '+k.g+'">'+(k.g==='yuksek'?'YÜKSEK':'ORTA')+'</span></span><span class="c">'+esc(k.cat)+'</span></div><div class="v">'+pc(k.h)+'</div></div>'}).join('')+'</div>';
+    h+='<div class="more">'+row('Sıralama',(a.pos?a.pos+'. ('+a.pts+' p)':'–')+'  ·  '+(b.pos?b.pos+'. ('+b.pts+' p)':'–'))
+     +(a.xgf!=null?row('xG atılan / yenen (son maçlar)',fx(a.xgf)+'/'+fx(a.xga)+'  ·  '+fx(b.xgf)+'/'+fx(b.xga)):'')
+     +(a.rest!=null||b.rest!=null?row('Dinlenme',(a.rest!=null?a.rest+' gün':'–')+'  ·  '+(b.rest!=null?b.rest+' gün':'–')):'')
+     +(e.kor!=null?row('Beklenen korner',e.kor):'')+(e.krt!=null?row('Beklenen kart',e.krt):'')
+     +'<div style="margin-top:6px;font-size:12px">Yüzdeler, bu maça en çok benzeyen geçmiş maçlarda bu sonucun ne sıklıkla gerçekleştiğini gösterir.</div></div></div>';
+  });
+  return h+'</main>';
+}
+function fx(x){return x==null?'–':(+x).toFixed(1)}
+function row(k,v){return'<div class="row"><span>'+k+'</span><b>'+esc(v)+'</b></div>'}
+function basari(){
+  var T=DATA.track||{},C=T.cat||[],n=0,hit=0;C.forEach(function(c){n+=c.n;hit+=c.hit});
+  var h='<main><div class="sec">Sonuçlanan analizler</div><div class="big"><div class="kpi"><b>'+n+'</b><span>analiz</span></div><div class="kpi"><b>'+hit+'</b><span>doğru</span></div><div class="kpi"><b style="color:var(--ac)">'+(n?Math.round(hit/n*100):0)+'%</b><span>isabet</span></div></div>';
+  h+='<div class="sec">Kategoriye göre</div><div class="card">'+C.map(function(c){return'<div class="row" style="padding:7px 0"><span>'+esc(c.k)+' <small style="color:var(--mu)">('+c.n+')</small></span><b>'+Math.round(c.hit/c.n*100)+'%</b></div>'}).join('')+'</div>';
+  var R=T.recent||[];
+  if(R.length) h+='<div class="sec">Son sonuçlar</div><div class="card" style="padding:4px 14px">'+R.map(function(r){return'<div class="res"><span class="dot '+(r.ok?'y':'n')+'">'+(r.ok?'✓':'✕')+'</span><div class="t"><div>'+esc(r.m)+'</div><small>'+esc(r.s)+' · model '+pc(r.p)+'</small></div><b>'+esc(r.sc||'')+'</b></div>'}).join('')+'</div>';
+  return h+'<p style="color:var(--mu);font-size:12px;margin:12px 4px">Tüm analizler maç başlamadan önce kaydedilir ve sonuçlar silinmeden olduğu gibi gösterilir.</p></main>';
+}
+function hakkinda(){
+  return'<main class="prose"><div class="sec">Analiz Lab nedir?</div><div class="card"><p>Analiz Lab, futbol maçlarını istatistik ve veri modeliyle inceleyen bir analiz uygulamasıdır. Her maç için, son sezonlarda oynanmış on binlerce maç arasından en çok benzeyenleri bulur ve bu maçlarda hangi sonuçların ne sıklıkla gerçekleştiğini gösterir.</p>'
+  +'<h3>Güven seviyeleri</h3><p><b>Yüksek</b>: model bu sonucu geçmişte güçlü biçimde desteklemiş. <b>Orta</b>: destek var ama daha zayıf. Güven seviyesi kesinlik anlamına gelmez.</p>'
+  +'<h3>Neler gösterilir?</h3><p>Form, puan durumu, beklenen gol (xG), dinlenme süresi, beklenen korner ve kart sayıları ile model olasılıkları.</p></div>'
+  +'<div class="warn">Analiz Lab bir bahis uygulaması değildir; bahis oynatmaz, bahis sitelerine yönlendirmez, bahis tavsiyesi vermez. İçerik yalnızca bilgi amaçlıdır ve 18 yaşından büyükler içindir. Geçmiş isabet oranları gelecekteki sonuçları garanti etmez.</div>'
+  +'<p style="color:var(--mu);font-size:12px;margin:14px 4px">Veriler günde üç kez güncellenir.</p></main>';
+}
+function render(){
+  if(!DATA){document.getElementById('view').innerHTML='<div class="empty"><b>Yükleniyor…</b></div>';return}
+  if(DATA.gen) document.getElementById('gen').textContent='Güncellendi: '+new Date(DATA.gen).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('view').innerHTML=S.t==='m'?matches():S.t==='b'?basari():hakkinda();
+}
+document.addEventListener('click',function(ev){
+  var n=ev.target.closest('nav button');if(n){S.t=n.dataset.t;document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b===n)});render();scrollTo(0,0);return}
+  var d=ev.target.closest('[data-day]');if(d){S.day=d.dataset.day;render();return}
+  if(ev.target.closest('[data-hi]')){S.hi=!S.hi;render();return}
+  var c=ev.target.closest('.card[data-id]');if(c){S.open[c.dataset.id]=!S.open[c.dataset.id];c.classList.toggle('open')}
+});
+function gate(){
+  if(st('al18')==='1')return;
+  var g=document.createElement('div');g.className='gate';
+  g.innerHTML='<div class="logo" style="width:52px;height:52px;font-size:22px;border-radius:14px">AL</div><h2>Analiz Lab</h2><p>Bu uygulama futbol istatistikleri ve model analizleri içerir. Bahis oynatmaz ve bahis tavsiyesi vermez. Devam etmek için 18 yaşından büyük olmalısın.</p><button class="btn" id="y18">18 yaşından büyüğüm</button><button class="btn g" id="n18">Değilim</button>';
+  document.body.appendChild(g);
+  g.querySelector('#y18').onclick=function(){st('al18','1');g.remove()};
+  g.querySelector('#n18').onclick=function(){g.innerHTML='<h2>Üzgünüz</h2><p>Analiz Lab yalnızca 18 yaş ve üzeri kullanıcılar içindir.</p>'};
+}
+gate();render();
+if(DATA_URL){fetch(DATA_URL,{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){DATA=d;render()}).catch(function(){})}
+</script>
+</body>
+</html>
